@@ -30,18 +30,11 @@ function realRequireChain(
     includes: string[],
     preResults: string[] = []
 ): string[] {
-    const dependents: string[] = [];
-
-    includes.forEach(id => {
+    const dependents: string[] = includes.filter(id => {
+        return id !== filename && !preResults.includes(id);
+    }).filter(id => {
         const _module = require.cache[id] as NodeJS.Module;
-
-        if (_module.filename !== filename &&
-            !dependents.includes(_module.filename) &&
-            !preResults.includes(_module.filename) &&
-            _module.children.some(child => child.filename === filename)
-        ) {
-            dependents.push(_module.filename);
-        }
+        return _module.children.some(child => child.id === filename);
     });
 
     return dependents.reduce((dependents, dep) => [

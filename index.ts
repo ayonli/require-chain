@@ -1,37 +1,39 @@
-import { normalize } from "path";
+import { normalize, sep } from "path";
+
+const NodeModuleDir = sep + "node_modules" + sep;
 
 /**
  * Finds all the CommonJS files and their ancestors that require the `filename`.
- * Useful when watching file changes and hot-reload modules. This function helps
- * us retrieve all the dependent files that rely on the changed file, and we can
- * reload them all at once.
  * 
  * @param includes By default, the function searches every cached file except
  *  the ones in `node_modules` and the `require.main.filename`. We can provide
- *  this argument to set specific files that can be searched.
+ *  this argument to set more specific files that can be searched.
  */
-export default function findDependents(
+export default function requireChain(
     filename: string,
     includes: string[] | ((files: string[]) => string[]) | undefined = void 0,
-    /** @inner */
-    preResults: string[] = []
 ) {
-    filename = normalize(filename);
-    const cache = require.cache;
-    let targets = Array.isArray(includes)
-        ? includes
-        : Object.getOwnPropertyNames(cache).filter(id => {
-            return id !== require.main?.filename && !id.includes("node_modules");
-        });
+    const defaultEntries = Object.getOwnPropertyNames(require.cache).filter(id => {
+        return id !== require.main?.filename && !id.includes(NodeModuleDir);
+    });
+    let entries = Array.isArray(includes) ? includes : defaultEntries;
 
     if (typeof includes === "function") {
-        targets = includes(targets);
+        entries = includes(entries);
     }
 
+    return realRequireChain(normalize(filename), entries, []);
+}
+
+function realRequireChain(
+    filename: string,
+    includes: string[],
+    preResults: string[] = []
+): string[] {
     const dependents: string[] = [];
 
-    for (const id of targets) {
-        const _module = cache[id] as NodeModule;
+    includes.forEach(id => {
+        const _module = require.cache[id] as NodeJS.Module;
 
         if (_module.filename !== filename &&
             !dependents.includes(_module.filename) &&
@@ -40,13 +42,10 @@ export default function findDependents(
         ) {
             dependents.push(_module.filename);
         }
-    }
-
-    dependents.forEach((dep) => {
-        dependents.push(
-            ...findDependents(dep, targets, [...preResults, ...dependents])
-        );
     });
 
-    return dependents;
+    return dependents.reduce((dependents, dep) => [
+        ...dependents,
+        ...realRequireChain(dep, includes, [...preResults, ...dependents])
+    ], dependents);
 }

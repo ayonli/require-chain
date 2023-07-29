@@ -1,7 +1,7 @@
 {
-  "name": "find-dependents",
+  "name": "require-chain",
   "version": "1.0.0",
-  "description": "Finds all the CommonJS files and their ancestors that require the filename.",
+  "description": "Finds all the CommonJS files and their ancestors that require the target file.",
   "main": "index.js",
   "scripts": {
     "build": "tsc --module commonjs --target es2015 --sourceMap true --declaration true index.ts",
@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ayonli/find-dependents.git"
+    "url": "git+https://github.com/ayonli/require-chain.git"
   },
   "keywords": [
     "dependent",
@@ -26,9 +26,9 @@
   "license": "MIT",
   "types": "./index.d.ts",
   "bugs": {
-    "url": "https://github.com/ayonli/find-dependents/issues"
+    "url": "https://github.com/ayonli/require-chain/issues"
   },
-  "homepage": "https://github.com/ayonli/find-dependents#readme",
+  "homepage": "https://github.com/ayonli/require-chain#readme",
   "devDependencies": {
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.4.5",

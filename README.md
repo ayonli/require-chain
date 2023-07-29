@@ -31,8 +31,8 @@ console.log(dependents);
 ## `module.parent` vs `module.children`
 
 When a module (CommonJS file) is required, the `module.parent` property is
-assigned to the first dependent module (AKA the initiator). However, there maybe
-many dependent files that require the same module, so reversing the
+assigned to the first dependent module (AKA the initiator). However, there may
+be many dependent files that require the same module, so reversing the
 `module.parent` to find its ancestors cannot retrieve all the dependents.
 
 `module.children`, on the other hand, stores all the child modules that the

@@ -22,10 +22,10 @@ export default function requireChain(
         entries = includes(entries);
     }
 
-    return realRequireChain(normalize(filename), entries, []);
+    return findRequireChain(normalize(filename), entries, []);
 }
 
-function realRequireChain(
+function findRequireChain(
     filename: string,
     includes: string[],
     preResults: string[] = []
@@ -39,6 +39,6 @@ function realRequireChain(
 
     return dependents.reduce((dependents, dep) => [
         ...dependents,
-        ...realRequireChain(dep, includes, [...preResults, ...dependents])
+        ...findRequireChain(dep, includes, [...preResults, ...dependents])
     ], dependents);
 }

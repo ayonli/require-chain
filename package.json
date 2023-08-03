@@ -1,8 +1,9 @@
 {
   "name": "require-chain",
-  "version": "1.0.0",
-  "description": "Finds all the CommonJS files and their ancestors that require the target file.",
+  "version": "2.0.0",
+  "description": "Functions that retrieve all the dependency or the dependent files that related to the target file.",
   "main": "index.js",
+  "types": "./index.d.ts",
   "scripts": {
     "build": "tsc --module commonjs --target es2015 --sourceMap true --declaration true index.ts",
     "prepublishOnly": "npm run build",
@@ -24,7 +25,6 @@
   ],
   "author": "A-yon Lee <the@ayon.li>",
   "license": "MIT",
-  "types": "./index.d.ts",
   "bugs": {
     "url": "https://github.com/ayonli/require-chain/issues"
   },

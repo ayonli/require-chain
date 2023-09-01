@@ -92,7 +92,7 @@ export function findDependencies(
         const _module = require.cache[filename];
 
         if (_module) {
-            appendDependencies(results, _module, entries);
+            appendDependencies(results, _module, entries, []);
         }
 
         results = results.filter(file => file !== filename);
@@ -103,7 +103,7 @@ export function findDependencies(
             const _module = require.cache[file];
 
             if (_module) {
-                appendDependencies(results, _module, entries);
+                appendDependencies(results, _module, entries, []);
             }
         });
 
@@ -116,15 +116,16 @@ export function findDependencies(
 function appendDependencies(
     deps: string[] = [],
     module: NodeJS.Module,
-    includes: string[]
+    includes: string[],
+    parents: NodeModule[]
 ): string[] {
     if (!deps.includes(module.id) && includes.includes(module.id)) {
         deps.push(module.id);
     }
 
-    if (module.children?.length) {
+    if (!parents.includes(module) && module.children?.length) {
         module.children.forEach(sub => {
-            appendDependencies(deps, sub, includes);
+            appendDependencies(deps, sub, includes, [...parents, module]);
         });
     }
 
